@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain } = require('electron');
+const { app, BrowserWindow, ipcMain, Tray } = require('electron');
 const data = require('./data');
 
 app.on('ready', ()=>{
@@ -7,6 +7,7 @@ app.on('ready', ()=>{
         width: 600,
         height: 400
     });
+    tray = new Tray(`${__dirname}/app/img/icon-clock.png`);
 
     mainWindow.loadURL(`file://${__dirname}/app/index.html`);
 })
