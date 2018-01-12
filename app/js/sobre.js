@@ -1,5 +1,5 @@
 const { ipcRenderer, shell } = require('electron');
-    const process = require('process');
+const process = require('process');
 
 let linkFechar = document.querySelector("#link-fechar");
 let linkTwitter = document.querySelector("#link-twitter");
@@ -14,5 +14,5 @@ linkFechar.addEventListener('click', function () {
 })
 
 linkTwitter.addEventListener('click', function () {
-    shell.openExternal("https://www.twitter.com/cristianmendesfirmino");
+    shell.openExternal("https://www.twitter.com/dquintanilhas");
 })
