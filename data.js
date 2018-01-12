@@ -3,7 +3,7 @@ const fs = require('fs');
 
 module.exports = {
     salvaDados(curso, tempoEstudado){
-        let arquivoDoCurso = `${__dirname}/data/${curso}.json`; 
+        let arquivoDoCurso = `${__dirname}/data/${curso}.json`;
         if(fs.existsSync()){
             this.adicionaTempoAoCurso(arquivoDoCurso, tempoEstudado);
         } else {
@@ -41,6 +41,13 @@ module.exports = {
     getData(nomeCurso){
         let arquivoDoCurso = `${__dirname}/data/${nomeCurso}.json`;
         return jsonfile.readFile(arquivoDoCurso);
-            
+
+    },
+    pegaNomeDosCursos(){
+      let arquivos = fs.readdirSync(__dirname + '/data');
+      let cursos = arquivos.map((arquivo)=>{
+        return arquivo.substr(0, arquivo.lastIndexOf('.'));
+      });
+      return cursos;
     }
 }

@@ -1,5 +1,6 @@
-const { app, BrowserWindow, ipcMain, Tray } = require('electron');
+const { app, BrowserWindow, ipcMain, Tray, Menu } = require('electron');
 const data = require('./data');
+const template = require('./template');
 
 app.on('ready', ()=>{
     console.log("Aplicacao inciada");
@@ -8,7 +9,10 @@ app.on('ready', ()=>{
         height: 400
     });
     tray = new Tray(`${__dirname}/app/img/icon-clock.png`);
+    let menuTemplate = template.geraTrayTemplate(mainWindow);
+    let trayMenu = Menu.buildFromTemplate(menuTemplate);
 
+    tray.setContextMenu(trayMenu);
     mainWindow.loadURL(`file://${__dirname}/app/index.html`);
 })
 
@@ -26,7 +30,7 @@ ipcMain.on('abrir-janela-sobre', ()=>{
                 alwaysOnTop: true,
                 frame: false
             });
-         
+
         sobreWindow.on('closed', () => {
             sobreWindow = null;
         })
@@ -39,10 +43,16 @@ ipcMain.on('abrir-janela-sobre', ()=>{
 
 ipcMain.on('fechar-janela-sobre', ()=>{
     sobreWindow.close();
-    
-})
+
+});
 
 ipcMain.on('curso-parado', (event, curso, tempoEstudado) =>{
     console.log(`O curso ${curso} foi estudado ${tempoEstudado}`);
     data.salvaDados(curso, tempoEstudado);
-})
+});
+
+ipcMain.on('curso-adicionado', (event, novoCurso) => {
+  let novoTemplate = template.adicionaCursoNoTray(novoCurso);
+  let novoTrayMenu = Menu.buildFromTemplate(novoTemplate);
+  tray.setContextMenu(novoTrayMenu);
+});
