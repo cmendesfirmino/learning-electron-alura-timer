@@ -1,9 +1,10 @@
-const { app, BrowserWindow, ipcMain, Tray, Menu }  = require('electron');
+const { app, BrowserWindow, ipcMain, Tray, Menu, globalShortcut }  = require('electron');
 const data = require('./data')
 const templateGenerator = require('./template')
 
 let tray = null;
 let mainWindow = null;
+
 app.on('ready', () => {
     console.log('Aplicacão iniciada');
     mainWindow = new BrowserWindow({
@@ -15,6 +16,14 @@ app.on('ready', () => {
     let trayMenu = Menu.buildFromTemplate(template);
     tray.setContextMenu(trayMenu);
 
+   
+    let templateMenu = templateGenerator.geraMenuPrincipalTemplate(app);
+    let menuPrincipal = Menu.buildFromTemplate(templateMenu);
+    Menu.setApplicationMenu(menuPrincipal);
+
+    globalShortcut.register('CmdOrCtrl+Shift+S', ()=>{
+        mainWindow.send('atalho-iniciar-parar');
+    })
 
     mainWindow.loadURL(`file://${__dirname}/app/index.html`);
 
@@ -54,6 +63,10 @@ ipcMain.on('curso-adicionado', (event, novoCurso) => {
     let novoTemplate = templateGenerator.adicionaCursoNoTray(novoCurso, mainWindow );
     let novoTrayMenu = Menu.buildFromTemplate(novoTemplate);
     tray.setContextMenu(novoTrayMenu);
+
+    let novoTemplateMenu = templateGenerator.geraMenuPrincipalTemplate(app);
+    let novoMenuPrincipal = Menu.buildFromTemplate(novoTemplateMenu);
+    Menu.setApplicationMenu(novoMenuPrincipal);
 });
 
 

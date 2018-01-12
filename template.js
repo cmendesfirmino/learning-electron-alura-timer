@@ -1,12 +1,14 @@
+const { ipcMain } = require('electron');
+
 const data = require('./data');
 
 module.exports = {
     templateInicial: null,
 
-    geraTrayTemplate(win){
+    geraTrayTemplate(win) {
         let template = [
             {
-                'label':'Cursos'
+                'label': 'Cursos'
             },
             {
                 type: 'separator'
@@ -17,7 +19,6 @@ module.exports = {
         cursos.forEach((curso) => {
             let menuItem = {
                 label: curso,
-                type: 'radio',
                 click: () => {
                     win.send('curso-trocado', curso);
                 }
@@ -27,10 +28,9 @@ module.exports = {
         this.templateInicial = template;
         return template;
     },
-    adicionaCursoNoTray(curso, win){
+    adicionaCursoNoTray(curso, win) {
         this.templateInicial.push({
             label: curso,
-            type: 'radio',
             checked: true,
             click: () => {
                 win.send('curso-trocado', curso);
@@ -38,5 +38,42 @@ module.exports = {
         })
 
         return this.templateInicial;
+    },
+    geraMenuPrincipalTemplate(app) {
+        let templateMenu = [
+            {
+                label: 'Cursos',
+                submenu: this.templateInicial
+            },
+            {
+                label: 'View',
+                submenu: [
+                    {role: 'reload'},
+                    {role: 'togglefullscreen'},
+                    {role: 'toggledevtools'}
+                ]
+            }
+        ];
+
+        let templateSobre = {
+            label: null,
+            submenu: [{
+                label: 'Sobre',
+                accelerator: 'CmdOrCtrl+I',
+                click: () => {
+                    ipcMain.emit('abrir-janela-sobre')
+                }
+            }]
+        };
+
+        if(process.platform == 'darwin'){
+            templateSobre.label =  app.getName();
+            templateMenu.unshift(templateSobre);
+        } else {
+            templateSobre.label = "Sobre";
+            templateMenu.push(templateSobre);
+        }
+        
+        return templateMenu;
     }
 }
